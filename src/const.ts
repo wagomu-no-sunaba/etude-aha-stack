@@ -1,1 +1,1 @@
-export const countFile = '/tmp/todo.txt';
+export const todoFile = '/tmp/todo.txt';

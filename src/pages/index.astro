@@ -1,17 +1,17 @@
 ---
 import fs from "node:fs";
-import { countFile } from "../const";
+import { todoFile } from "../const";
 
 try {
   if (!fs.existsSync("/tmp")) {
     fs.mkdirSync("/tmp");
   }
-  fs.accessSync(countFile);
+  fs.accessSync(todoFile);
 } catch {
-  fs.writeFileSync(countFile, "0");
+  fs.writeFileSync(todoFile, "0");
 }
 
-const count = fs.readFileSync(countFile, "utf-8");
+const count = fs.readFileSync(todoFile, "utf-8");
 ---
 
 <html lang="en">
