@@ -1,40 +1,64 @@
 ---
-import fs from 'node:fs'
-import { countFile } from '../const';
-
+import fs from "node:fs";
+import { countFile } from "../const";
 
 try {
-  if (!fs.existsSync('/tmp')) {
-    fs.mkdirSync('/tmp');
+  if (!fs.existsSync("/tmp")) {
+    fs.mkdirSync("/tmp");
   }
-  fs.accessSync(countFile)
+  fs.accessSync(countFile);
 } catch {
-  fs.writeFileSync(countFile, '0')
+  fs.writeFileSync(countFile, "0");
 }
 
-const count = fs.readFileSync(countFile, 'utf-8')
+const count = fs.readFileSync(countFile, "utf-8");
 ---
 
-<html lang='en'>
+<html lang="en">
   <head>
-    <meta charset='utf-8' />
-    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
-    <meta name='viewport' content='width=device-width' />
-    <meta name='generator' content='{Astro.generator}' />
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content="{Astro.generator}" />
     <script src="https://unpkg.com/htmx.org@1"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
     <title>Astro</title>
   </head>
-  <body>
-    <h1>
-      Count: <span id='count'>{count}</span>
+  <body class="min-w-full min-h-full flex justify-center flex-col">
+    <h1
+      class="text-center mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl"
+    >
+      - TODO -
     </h1>
-
-    <button hx-post='/api/increment' hx-swap='none'>
-      Increment
-    </button>
-    <button hx-post='/api/decrement' hx-swap='none'>
-      Decrement
-    </button>
+    <div
+      class="w-full max-w-2xl mx-auto rounded bg-gray-50 mt-3 px-8 pb-8 pt-6 shadow"
+    >
+      <form class="flex justify-between">
+        <input
+          class="focus:shadow-outline w-9/12 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+          id="todo"
+          type="text"
+          placeholder="TODO"
+        />
+        <button
+          class="w-2/12 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+          >追加</button
+        >
+      </form>
+      <hr class="mb-2 mt-2" />
+      <div class="bg-white">
+        <ul>
+          <li>
+            <div class="flex px-3 pb-3 pt-2 shadow-md">
+              <input type="checkbox" />
+              <div class="mx-1">TODO fooooooo</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </body>
 </html>
