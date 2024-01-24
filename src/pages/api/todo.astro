@@ -1,0 +1,27 @@
+---
+import fs from "node:fs";
+import { todoFile } from "../../const";
+export const partial = true;
+let count = 0;
+const requestMethod = Astro.request.method;
+try {
+  if (requestMethod === "POST") { // 作成
+    // const url = new URL(Astro.request.url);
+    // const params = new URLSearchParams(url.search);
+    // hoge = params.get('hoge');
+    count = +fs.readFileSync(todoFile, "utf-8").trim();
+  } else if (requestMethod === "GET") { // 取得
+    // const url = new URL(Astro.request.url);
+    // const params = new URLSearchParams(url.search);
+    // hoge = params.get('hoge');
+  } else if (requestMethod === "PUT") { // 更新
+    // const url = new URL(Astro.request.url);
+    // const params = new URLSearchParams(url.search);
+    // hoge = params.get('hoge');
+  }
+} catch (error) {
+  console.error(error);
+}
+---
+
+{count}
