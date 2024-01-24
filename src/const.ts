@@ -1,0 +1,1 @@
+export const countFile = '/tmp/todo.txt';
