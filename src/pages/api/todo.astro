@@ -1,27 +1,76 @@
 ---
 import fs from "node:fs";
 import { todoFile } from "../../const";
+import { z } from "astro:content";
 export const partial = true;
-let count = 0;
-const requestMethod = Astro.request.method;
+
+const TODO = z.object({
+  id: z.number(),
+  title: z.string(),
+  complete: z.boolean(),
+});
+type TODO = z.infer<typeof TODO>;
+let todos: TODO[] = [];
 try {
-  if (requestMethod === "POST") { // 作成
-    // const url = new URL(Astro.request.url);
-    // const params = new URLSearchParams(url.search);
-    // hoge = params.get('hoge');
-    count = +fs.readFileSync(todoFile, "utf-8").trim();
-  } else if (requestMethod === "GET") { // 取得
-    // const url = new URL(Astro.request.url);
-    // const params = new URLSearchParams(url.search);
-    // hoge = params.get('hoge');
-  } else if (requestMethod === "PUT") { // 更新
-    // const url = new URL(Astro.request.url);
-    // const params = new URLSearchParams(url.search);
-    // hoge = params.get('hoge');
+  todos = JSON.parse(fs.readFileSync(todoFile, "utf-8").trim() || "[]");
+  todos.forEach((todo: TODO) => {
+    TODO.parse(todo);
+  });
+  const requestMethod = Astro.request.method;
+  if (requestMethod === "POST") {
+    // 作成
+    const formData = await Astro.request.formData();
+    for(const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+    const todo = formData.get("todo") || "";
+    console.log(todo);
+    todos.push({
+      id: todos.length + 1,
+      title: todo,
+      complete: false,
+    });
+    fs.writeFileSync(todoFile, JSON.stringify(todos));
+  } else if (requestMethod === "PUT") {
+    // 更新
+    const url = new URL(Astro.request.url);
+    const params = new URLSearchParams(url.search);
+    const id = params.get("id") || "";
+    const complete = params.get("complete") || "";
+    const todo = todos.find((todo) => todo.id === Number(id));
+    if (todo) {
+      todo.complete = complete === "true";
+    }
+    fs.writeFileSync(todoFile, JSON.stringify(todos));
   }
 } catch (error) {
   console.error(error);
 }
 ---
 
-{count}
+{
+  todos.length ? (
+    <ul>
+      {todos.map((todo) => (
+        <li>
+          <div class="flex px-3 pb-3 pt-2 shadow-md">
+            <input
+              type="checkbox"
+              checked={todo.complete}
+              onchange={`fetch('/api/todo?id=${
+                todo.id
+              }&complete=${!todo.complete}', { method: 'PUT' })`}
+              hx-swap="innerHTML"
+              hx-target="#todo-list"
+            />
+            <div class="mx-1">{todo.title}</div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <div class="flex justify-center items-center h-screen">
+      <div class="text-2xl">TODOがありません</div>
+    </div>
+  )
+}

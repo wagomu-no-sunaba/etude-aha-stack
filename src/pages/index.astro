@@ -10,8 +10,6 @@ try {
 } catch {
   fs.writeFileSync(todoFile, "0");
 }
-
-const count = fs.readFileSync(todoFile, "utf-8");
 ---
 
 <html lang="en">
@@ -28,37 +26,33 @@ const count = fs.readFileSync(todoFile, "utf-8");
     <title>Astro</title>
   </head>
   <body class="min-w-full min-h-full flex justify-center flex-col">
-    <h1
-      class="text-center mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl"
-    >
-      - TODO -
-    </h1>
-    <div
+    <header>
+      <h1
+        class="text-center mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl"
+      >
+        - TODO -
+      </h1>
+    </header>
+    <main
       class="w-full max-w-2xl mx-auto rounded bg-gray-50 mt-3 px-8 pb-8 pt-6 shadow"
     >
-      <form class="flex justify-between">
+      <form class="flex justify-between" hx-post="/api/todo" hx-trigger="submit" hx-swap="innerHTML" hx-target="#todo-list" hx-afterSwap="javascript:document.getElementById('todo').value=''">
         <input
           class="focus:shadow-outline w-9/12 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           id="todo"
+          name="todo"
           type="text"
           placeholder="TODO"
         />
         <button
           class="w-2/12 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-          >追加</button
+          type="submit">追加</button
         >
       </form>
       <hr class="mb-2 mt-2" />
-      <div class="bg-white">
-        <ul>
-          <li>
-            <div class="flex px-3 pb-3 pt-2 shadow-md">
-              <input type="checkbox" />
-              <div class="mx-1">TODO fooooooo</div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
+      <section class="bg-white">
+        <div id="todo-list" hx-get="/api/todo" hx-trigger="load once" hx-swap="innerHTML"></div>
+      </section>
+    </main>
   </body>
 </html>
