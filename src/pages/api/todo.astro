@@ -52,7 +52,7 @@ try {
   todos.length ? (
     <ul>
       {todos.map((todo) => (
-        <li>
+        <li id=`todo_${todo.id}`>
           <div class="flex px-3 pb-3 pt-2 shadow-md">
             <input
               type="checkbox"
