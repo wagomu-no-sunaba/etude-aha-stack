@@ -12,18 +12,19 @@ try {
 }
 ---
 
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content="{Astro.generator}" />
+    <meta name="generator" content={Astro.generator} />
+    <meta charset="utf-8" />
     <script src="https://unpkg.com/htmx.org@1"></script>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
-    <title>Astro</title>
+    <title>TODO App</title>
   </head>
   <body class="min-w-full min-h-full flex justify-center flex-col">
     <header>
@@ -36,7 +37,14 @@ try {
     <main
       class="w-full max-w-2xl mx-auto rounded bg-gray-50 mt-3 px-8 pb-8 pt-6 shadow"
     >
-      <form class="flex justify-between" hx-post="/api/todo" hx-trigger="submit" hx-swap="innerHTML" hx-target="#todo-list" hx-afterSwap="javascript:document.getElementById('todo').value=''">
+      <form
+        class="flex justify-between"
+        action="/api/todo"
+        method="post"
+        hx-swap="innerHTML"
+        hx-target="#todo-list"
+        hx-afterSwap="javascript:this.form.reset()"
+      >
         <input
           class="focus:shadow-outline w-9/12 appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
           id="todo"
@@ -46,12 +54,38 @@ try {
         />
         <button
           class="w-2/12 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+          onchange="this.form.submit()"
           type="submit">追加</button
         >
       </form>
       <hr class="mb-2 mt-2" />
       <section class="bg-white">
-        <div id="todo-list" hx-get="/api/todo" hx-trigger="load once" hx-swap="innerHTML"></div>
+        <!-- <div
+          id="todo-list"
+          hx-get="/api/todo"
+          hx-trigger="load once"
+          hx-swap="innerHTML"
+        >
+        </div> -->
+        <ul x-data="{id=1;title='hello';complete=false}">
+          <li id="todo_1" x-data="{ editing: false }">
+            <div class="flex px-3 pb-3 pt-2 shadow-md">
+              <input type="checkbox" />
+              <template x-if="!editing">
+                <div class="mx-1" x-on:dblclick="editing = true">hello</div>
+              </template>
+              <template x-if="editing">
+                <input type="text" class="mx-1" />
+              </template>
+              <button
+                x-if="editing"
+                class="rounded bg-blue-500 px-4 py-0 font-bold text-white hover:bg-blue-700"
+              >
+                変更
+              </button>
+            </div>
+          </li>
+        </ul>
       </section>
     </main>
   </body>

@@ -37,10 +37,19 @@ try {
     const params = new URLSearchParams(url.search);
     const id = params.get("id") || "";
     const complete = params.get("complete") || "";
+    const title = params.get("title") || "";
     const todo = todos.find((todo) => todo.id === Number(id));
     if (todo) {
       todo.complete = complete === "true";
+      todo.title = title;
     }
+    fs.writeFileSync(todoFile, JSON.stringify(todos));
+  } else if (requestMethod === "DELETE") {
+    // 削除
+    const url = new URL(Astro.request.url);
+    const params = new URLSearchParams(url.search);
+    const id = params.get("id") || "";
+    todos = todos.filter((todo) => todo.id !== Number(id));
     fs.writeFileSync(todoFile, JSON.stringify(todos));
   }
 } catch (error) {
@@ -52,20 +61,38 @@ try {
   todos.length ? (
     <ul>
       {todos.map((todo) => (
-        <li id=`todo_${todo.id}`>
+        <li id="todo_${todo.id}" x-data="{ editing: false }">
           <div class="flex px-3 pb-3 pt-2 shadow-md">
             <input
               type="checkbox"
-              checked={todo.complete}
-              onchange={`fetch('/api/todo?id=${
-                todo.id
-              }&complete=${!todo.complete}', { method: 'PUT' })`}
+              :checked="todo.complete"
+              @change=`fetch('/api/todo?id={todo.id}&complete={!todo.complete}&title={todo.title}, { method: 'PUT' })`
               hx-swap="innerHTML"
               hx-target="#todo-list"
             />
-            <div class="mx-1">{todo.title}</div>
+            <template x-if="!editing">
+              <div class="mx-1" x-on:dblclick="editing = true">{todo.title}</div>
+            </template>
+            <template x-if="editing">
+              <input
+                type="text"
+                class="mx-1"
+                value={todo.title}
+                x-on:dblclick="editing = false"
+                @keydown.enter="editing = false;fetch('/api/todo?id=${todo.id}&complete=${!todo.complete}&title=${todo.title}', { method: 'PUT' })"
+              />
+            </template>
+            <button 
+              class="rounded bg-blue-500 px-4 py-0 font-bold text-white hover:bg-blue-700"
+              x-show="editing"
+              @click="editing = false;"
+              @change="fetch('/api/todo?id=${todo.id}&complete=${!todo.complete}&title=${todo.title}', { method: 'PUT' })"
+            >
+              変更
+            </button>
           </div>
         </li>
+
       ))}
     </ul>
   ) : (
